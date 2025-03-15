@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 
 #define ICMP_ECHO_REQUEST 8
 #define ICMP_ECHO_REPLY 0
@@ -27,4 +28,4 @@ struct icmp_time_exceeded{
 	uint16_t seq;
 }__attribute__((packed));
 
-uint16_t(void *buffer, size_t length);
+uint16_t checksum(void *buffer, size_t length);

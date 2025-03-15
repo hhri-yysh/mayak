@@ -1,6 +1,6 @@
 #include "../lib/icmp.h"
 
-uint16_t(void *buffer, size_t length) {
+uint16_t checksum(void *buffer, size_t length) {
 	uint16_t *data = buffer;
 	uint32_t sum = 0;
 
