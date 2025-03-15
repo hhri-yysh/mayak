@@ -1,4 +1,5 @@
-#include "lib/un.h"
+#include "../lib/un.h"
+#include "../lib/icmp.h"
 
 void example_print(){
 	printf("./mayak --help\n");
