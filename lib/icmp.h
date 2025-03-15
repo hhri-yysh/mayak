@@ -1,0 +1,30 @@
+#pragma once
+
+#include <stdint.h>
+
+#define ICMP_ECHO_REQUEST 8
+#define ICMP_ECHO_REPLY 0
+#define ICMP_TIME_EXCEEDED 11
+#define ICMP_DESTINATION 3
+
+// ICMp packet encapsulation in ipv4 packet. The packet have: header and data.
+// Declate two struct(icmp_header, icmp_time_exceeded) and func checksum 
+// checksum https://www.scribd.com/doc/7074846/ICMP-and-Checksum-Calc (Figure 9.19) 
+
+struct icmp_header{
+	uint8_t icmp_type;
+	uint8_t icmp_code;
+	uint16_t icmp_checksum;
+	uint16_t id;
+	uint16_t seq;
+}__attribute__((packed));
+
+struct icmp_time_exceeded{
+	uint8_t icmp_type;
+	uint8_t icmp_code;
+	uint16_t icmp_checksum;
+	uint16_t id;
+	uint16_t seq;
+}__attribute__((packed));
+
+uint16_t(void *buffer, size_t length);

@@ -7,6 +7,9 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #include <string.h>
+#include <sys/type.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
 #define MAX_HOP 30
 #define TIMEOUT 5
