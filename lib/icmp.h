@@ -8,7 +8,7 @@
 #define ICMP_DESTINATION 3
 
 // ICMp packet encapsulation in ipv4 packet. The packet have: header and data.
-// Declate two struct(icmp_header, icmp_time_exceeded) and func checksum 
+// Declared two struct(icmp_header, icmp_time_exceeded) and func checksum 
 // checksum https://www.scribd.com/doc/7074846/ICMP-and-Checksum-Calc (Figure 9.19) 
 
 struct icmp_header{
