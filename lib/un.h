@@ -7,7 +7,7 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #include <string.h>
-#include <sys/type.h>
+#include <sys/types.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 
