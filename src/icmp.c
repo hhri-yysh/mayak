@@ -9,7 +9,7 @@ uint16_t checksum(void *buffer, size_t length) {
 	}
 
 	if (length == 1) {
-		sum += *data;
+		sum += *(uint8_t*)data;
 	}
 
 	sum = (sum >> 16) + (sum & 0xffff);
