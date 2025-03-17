@@ -9,7 +9,10 @@
 #include <string.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include <netdb.h>
+#include <getopt.h>
+#include <unistd.h>
 
 #define MAX_HOP 30
 #define TIMEOUT 5
