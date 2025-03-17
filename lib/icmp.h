@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "../lib/un.h"
 
 #define ICMP_ECHO_REQUEST 8
 #define ICMP_ECHO_REPLY 0
@@ -20,12 +21,4 @@ struct icmp_header{
 	uint16_t seq;
 }__attribute__((packed));
 
-/*struct icmp_time_exceeded{
-	uint8_t icmp_type;
-	uint8_t icmp_code;
-	uint16_t icmp_checksum;
-	uint16_t id;
-	uint16_t seq;
-}__attribute__((packed));
-*/
 uint16_t checksum(void *buffer, size_t length);
