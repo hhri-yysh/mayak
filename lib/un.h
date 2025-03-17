@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <stdint.h>
+#include <stddef.h>
 
 #define MAX_HOP 30
 #define TIMEOUT 5

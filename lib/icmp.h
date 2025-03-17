@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-#include <stddef.h>
 #include "../lib/un.h"
 
 #define ICMP_ECHO_REQUEST 8
@@ -22,3 +20,5 @@ struct icmp_header{
 }__attribute__((packed));
 
 uint16_t checksum(void *buffer, size_t length);
+int send_echo_req(int sock, struct sockaddr_in* addr, int ident, int seq, int ttl);
+int recv_echo_reply(int sock, int ident,int ttl);

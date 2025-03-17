@@ -21,8 +21,10 @@ int main(int argc, char** argv){
 
 	int sockfd, opt;
 
+	struct sockaddr_in target;
+
 	if (socket_work(&sockfd) < 0) {
-		err_quit("Failed to create socket");
+		err_sys("Failed to create socket");
 	}
 
 	while(1) {
@@ -56,10 +58,10 @@ int main(int argc, char** argv){
 				printf("\t --fqdn, -f\n");
 				break;
 			case '4':
-				printf("IPv6 select\n");
+				printf("IPv4 select\n");
 				break;
 			case '6':
-				printf("IPv4 select\n");
+				printf("IPv6 select\n");
 				break;
 			case 'f':
 
@@ -72,6 +74,36 @@ int main(int argc, char** argv){
 				abort();
 		}
 	}
+
+	printf("Trace to %s\n", argv[1] );
+
+	for (int ttl = 1; ttl <= MAX_HOP; ttl++) {
+    	printf("%2d ", ttl);
+
+		memset(&target, 0, sizeof(target));
+		target.sin_family = AF_INET;
+		if (inet_pton(AF_INET, argv[1], &target.sin_addr) <= 0) {
+    		perror("inet_pton");
+    		exit(1);
+		}
+
+   		if (send_echo_req(sockfd, &target, getpid(), ttl, ttl) < 0) {
+        	fprintf(stderr, "Failed to send packet\n");
+        	continue;
+	    }
+
+    	int status = recv_echo_reply(sockfd, getpid(),ttl);
+    	if (status < 0) {
+        	fprintf(stderr, "Failed to receive packet\n");
+        	continue;
+    	}
+
+    	if (status == 1) {
+        	printf("Reached destination!\n");
+        	break;
+    	}
+	}
+
 	close(sockfd);
 	exit(0);
 }
