@@ -27,6 +27,8 @@ main (int argc, char **argv) {
 
         struct sockaddr_in target;
 
+        socket_work(&sockfd);
+
         while (1) {
                 static struct option long_opt[]
                     = { { "help", no_argument, 0, 'h' },
