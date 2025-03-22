@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=199309L
 
 TARGET = mayak
 SRC_DIR = src
