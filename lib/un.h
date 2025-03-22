@@ -13,8 +13,9 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #define MAX_HOP 30
-// #define TIMEOUT 5
+#define TIMEOUT 5
 
 #endif

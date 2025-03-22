@@ -24,3 +24,4 @@ uint16_t checksum (void *buffer, size_t length);
 int send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq,
                    int ttl);
 int recv_echo_reply (int sock, int ttl);
+double rtt_calculate(struct timeval *start_time, struct timeval *end_time);

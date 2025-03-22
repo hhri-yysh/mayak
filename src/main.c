@@ -27,10 +27,6 @@ main (int argc, char **argv) {
 
         struct sockaddr_in target;
 
-        if (socket_work (&sockfd) < 0) {
-                err_sys ("Failed to create socket");
-        }
-
         while (1) {
                 static struct option long_opt[]
                     = { { "help", no_argument, 0, 'h' },
@@ -78,8 +74,6 @@ main (int argc, char **argv) {
         printf ("Trace to %s\n", argv[1]);
 
         for (int ttl = 1; ttl <= MAX_HOP; ttl++) {
-                printf ("%2d ", ttl);
-
                 memset (&target, 0, sizeof (target));
                 target.sin_family = AF_INET;
                 if (inet_pton (AF_INET, argv[1], &target.sin_addr) <= 0) {
@@ -97,6 +91,7 @@ main (int argc, char **argv) {
                         fprintf (stderr, "Failed to receive packet\n");
                         continue;
                 }
+		sleep(1);
         }
 
         close (sockfd);
