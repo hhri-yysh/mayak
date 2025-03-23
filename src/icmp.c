@@ -21,7 +21,7 @@ checksum (void *buffer, size_t length) {
 
 int
 send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq,
-               int ttl) {
+               int ttl, struct timeval *start_time) {
         struct icmp_header icmp;
         memset (&icmp, 0, sizeof (icmp));
 
@@ -32,6 +32,8 @@ send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq,
         icmp.icmp_checksum = 0;
 
         icmp.icmp_checksum = checksum (&icmp, sizeof (icmp));
+	
+	gettimeofday(start_time, NULL);
 
         if (sock < 0) {
                 fprintf (stderr, "Invalid socket descriptor\n");
@@ -57,11 +59,11 @@ send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq,
 
 int
 //recv_echo_reply (int sock, int ttl, struct timeval *rtt) {
-recv_echo_reply (int sock, int ttl) {
+recv_echo_reply (int sock, int ttl, struct timeval *start_time) {
         char BUFF[512];
         struct sockaddr_in sender;
         //struct timespec dt;
-        struct timeval start_time , end_time, timeout;
+        struct timeval end_time, timeout;
         socklen_t sender_len = sizeof (sender);
 
         // setup timeout 
@@ -87,7 +89,7 @@ recv_echo_reply (int sock, int ttl) {
         }
 
         //gettimeofday(&start_time, NULL);
-        gettimeofday(&end_time, NULL); // record the end time (im fucked up, and I hate myself)
+	gettimeofday(&end_time, NULL); // record the end time (im fucked up, and I hate myself)
         struct iphdr *ip_hdr = (struct iphdr *)BUFF;
         struct icmp_header *icmp
             = (struct icmp_header *)(BUFF + (ip_hdr->ihl * 4));
@@ -99,19 +101,19 @@ recv_echo_reply (int sock, int ttl) {
         // dt.tv_nsec = 1000000;
         // nanosleep(&dt, NULL);
 
-        double rtt = rtt_calculate(&start_time, &end_time);
+        double rtt = rtt_calculate(start_time, &end_time);
 
         //printf("%lf %lf\n", rtt, rtt * 1000);
 
         // double rtt_cal = (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec) / 1e6;
 
 	if (icmp->icmp_type == 0 && icmp->icmp_code == 0){
-                printf(" %3d %s %lf ms\n", ttl, inet_ntoa(sender.sin_addr), rtt);
+                printf(" %3d %s %.2lf ms\n", ttl, inet_ntoa(sender.sin_addr), rtt);
 		printf("Destination reached: %s\n", inet_ntoa(sender.sin_addr));	
 		exit(0);
 	} 
 	else {
-		printf(" %3d %s %lf ms\n", ttl, inet_ntoa(sender.sin_addr), rtt);
+		printf(" %3d %s %.2lf ms\n", ttl, inet_ntoa(sender.sin_addr), rtt);
 	}
         //printf ("Received ICMP packet: type=%d, code=%d, from=%s\n",
          //       icmp->icmp_type, icmp->icmp_code, inet_ntoa (sender.sin_addr));

@@ -26,6 +26,7 @@ main (int argc, char **argv) {
         int opt;
 
         struct sockaddr_in target;
+	struct timeval start_time;
 
         socket_work(&sockfd);
 
@@ -83,12 +84,12 @@ main (int argc, char **argv) {
                         exit (EXIT_FAILURE);
                 }
 
-                if (send_echo_req (sockfd, &target, getpid (), ttl, ttl) < 0) {
+                if (send_echo_req (sockfd, &target, getpid (), ttl, ttl , &start_time) < 0) {
                         fprintf (stderr, "Failed to send packet\n");
                         continue;
                 }
 
-                int status = recv_echo_reply (sockfd, ttl);
+                int status = recv_echo_reply (sockfd, ttl, &start_time);
                 if (status < 0) {
                         fprintf (stderr, "Failed to receive packet\n");
                         continue;
