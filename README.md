@@ -5,7 +5,7 @@ Mayak is a traceroute clone created as a Pet-poject for GL BaseCamp Linux/Networ
 ## Building
 
 ```
-    sudo apt install clang build-essential make
+    sudo apt install gcc build-essential make
     mkdir build
     make
 ```
