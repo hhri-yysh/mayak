@@ -14,8 +14,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <netdb.h>
 
 #define MAX_HOP 30
 #define TIMEOUT 5
+#define _GNU_SOURCE
+#define _x86_64_
+#define _linux_
 
 #endif
