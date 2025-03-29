@@ -1,10 +1,12 @@
 CC = gcc
-CFLAGS = -O3 -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE
 
 TARGET = mayak
 SRC_DIR = src
-LIB_DIR = lib
 BUILD_DIR = build
+INCLUDE_DIR = include
+INCS = $(foreach DIR,$(INCLUDE_DIR),-I$(DIR))
+
+CFLAGS = -O3 -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE $(INCS)
 
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)

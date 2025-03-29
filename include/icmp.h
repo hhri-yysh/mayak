@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../lib/socket.h"
-#include "../lib/un.h"
+#include "socket.h"
+#include "un.h"
 
 #define ICMP_ECHO_REQUEST 8
 

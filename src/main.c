@@ -1,6 +1,6 @@
-#include "../lib/icmp.h"
-#include "../lib/socket.h"
-#include "../lib/un.h"
+#include "icmp.h"
+#include "socket.h"
+#include "un.h"
 
 void
 err_quit (const char *msg) {
@@ -27,12 +27,11 @@ main (int argc, char **argv) {
         int max_hop = MAX_HOP;
         int ip_ver = AF_INET;
         int fqdn_fl = 0;
+	char _interface[IFNAMSIZ] = {0};
 
         struct sockaddr_in sender;
         struct sockaddr_in target;
         struct timeval start_time;
-
-        socket_work (&sockfd);
 
         while (1) {
                 static struct option long_opt[]
@@ -42,11 +41,12 @@ main (int argc, char **argv) {
                         { "fqdn", no_argument, 0, 'f' },
                         { "timeout", required_argument, 0, 't' },
                         { "max-hop", required_argument, 0, 'm' },
+                        { "interface", required_argument, 0, 'i' },
                         { 0, 0, 0, 0 } };
 
                 int opt_index = 0;
 
-                opt = getopt_long (argc, argv, "46fht:m:", long_opt,
+                opt = getopt_long (argc, argv, "46fht:m:i:", long_opt,
                                    &opt_index);
                 if (opt == -1)
                         break;
@@ -65,6 +65,7 @@ main (int argc, char **argv) {
                         printf ("\t --fqdn, -f\n");
                         printf ("\t --max-hop, -m\n");
                         printf ("\t --timeout, -t\n");
+                        printf ("\t --interface, -i\n");
                         break;
                 case '4':
                         ip_ver = AF_INET;
@@ -91,50 +92,51 @@ main (int argc, char **argv) {
                                 exit (EXIT_FAILURE);
                         }
                         break;
+		case 'i':
+			strncpy(_interface, optarg, IFNAMSIZ - 1);
+			_interface[IFNAMSIZ - 1] = '\0';
+			break;
                 case '?':
-
                         break;
                 default:
                         abort ();
                 }
         }
+	
+	socket_work (&sockfd, _interface);
 
         if (optind >= argc) {
                 fprintf (stderr, "Usage: %s [OPTION] <ip>\n", argv[0]);
+		close(sockfd);
                 exit (EXIT_FAILURE);
         }
-
+        
         const char *target_input = argv[optind];
-        char target_ip [INET6_ADDRSTRLEN];
+        char target_ip[INET6_ADDRSTRLEN];
         struct addrinfo hints, *res;
 
-        memset(&hints, 0, sizeof(hints));
+        memset (&hints, 0, sizeof (hints));
         hints.ai_family = ip_ver; // AF_INET or AF_INET6
         hints.ai_socktype = SOCK_RAW;
         // Domain resolver: ./mayak dns.google.com -> 8.8.8.8
         // Pass hints to getaddrinfo
-        if (getaddrinfo(target_input, NULL, &hints, &res) != 0) {
-                fprintf(stderr, "Error resolving domain name: %s\n", target_input);
-                exit(EXIT_FAILURE);
+        if (getaddrinfo (target_input, NULL, &hints, &res) != 0) {
+                fprintf (stderr, "Error resolving domain name: %s\n",
+                         target_input);
+                exit (EXIT_FAILURE);
         }
         // Convert domain address to string
         if (res->ai_family == AF_INET) {
                 struct sockaddr_in *addr = (struct sockaddr_in *)res->ai_addr;
-                inet_ntop(AF_INET, &addr->sin_addr, target_ip, sizeof(target_ip));
-            } else if (res->ai_family == AF_INET6) {
+                inet_ntop (AF_INET, &addr->sin_addr, target_ip,
+                           sizeof (target_ip));
+        } else if (res->ai_family == AF_INET6) {
                 struct sockaddr_in6 *addr = (struct sockaddr_in6 *)res->ai_addr;
-                inet_ntop(AF_INET6, &addr->sin6_addr, target_ip, sizeof(target_ip));
-            }
+                inet_ntop (AF_INET6, &addr->sin6_addr, target_ip,
+                           sizeof (target_ip));
+        }
 
-        // if (ip_ver == AF_INET) {
-        //         struct sockaddr_in *addr = (struct sockaddr_in *)res->ai_addr;
-        //         inet_ntop(AF_INET, &addr->sin_addr, target_ip, sizeof(target_ip));
-        // } else if (ip_ver == AF_INET6) {
-        //         struct sockaddr_in6 *addr = (struct sockaddr_in6 *)res->ai_addr;
-        //         inet_ntop(AF_INET6, &addr->sin6_addr, target_ip, sizeof(target_ip));
-        // }
-        
-        freeaddrinfo(res);
+        freeaddrinfo (res);
 
         printf ("Trace to %s (%s)\n", target_input, target_ip);
 
@@ -173,6 +175,6 @@ main (int argc, char **argv) {
                         fprintf (stderr, "Failed to receive packet\n");
                         continue;
                 }
-                usleep(50000);
+                // usleep (50000);
         }
 }

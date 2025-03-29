@@ -1,4 +1,4 @@
-#include "../lib/icmp.h"
+#include "icmp.h"
 
 uint16_t
 checksum (void *buffer, size_t length) {
@@ -30,6 +30,9 @@ send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq, int ttl,
         icmp.id = htons (ident);
         icmp.seq = htons (seq);
         icmp.icmp_checksum = 0;
+        icmp.icmp_checksum = 0;
+        icmp.icmp_checksum = 0;
+        icmp.icmp_checksum = 0;
 
         icmp.icmp_checksum = checksum (&icmp, sizeof (icmp));
 
@@ -37,11 +40,13 @@ send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq, int ttl,
 
         if (sock < 0) {
                 fprintf (stderr, "Invalid socket descriptor\n");
+		close(sock);
                 return -1;
         }
 
         if (setsockopt (sock, IPPROTO_IP, IP_TTL, &ttl, sizeof (ttl)) < 0) {
                 perror ("sock(TTL)");
+		close(sock);
                 return -1;
         }
 
@@ -51,6 +56,7 @@ send_echo_req (int sock, struct sockaddr_in *addr, int ident, int seq, int ttl,
 
         if (pack_bytes < 0) {
                 perror ("sendto");
+		close(sock);
                 return -1;
         }
 
@@ -81,14 +87,17 @@ recv_echo_reply (int sock, int ttl, struct timeval *start_time, int timeset,
 
         if (pack_bytes < 0) {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                        printf (" %2d *\n", ttl); // output timeout
+                        printf (" %3d *\n", ttl); // output timeout
                         return (0);
                 }
                 perror ("recvfrom");
+		close(sock);
                 return -1;
         }
 
-        gettimeofday(&end_time, NULL); // record the end time (im fucked up, and I hate myself)
+        gettimeofday (
+            &end_time,
+            NULL); // record the end time (im fucked up, and I hate myself)
         struct iphdr *ip_hdr = (struct iphdr *)BUFF;
         struct icmp_header *icmp
             = (struct icmp_header *)(BUFF + (ip_hdr->ihl * 4));
